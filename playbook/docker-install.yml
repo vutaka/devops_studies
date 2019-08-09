@@ -1,0 +1,45 @@
+- name: Install docker
+  become: true
+  hosts: all
+  vars:
+    http_proxy: "{{ansible_env.http_proxy}}"
+    https_proxy: "{{ansible_env.https_proxy}}"
+    no_proxy: "{{ansible_env.no_proxy}}"
+
+  tasks:
+    - name: add docker repo
+      shell: "yum-config-manager --add-repo https://download.docker.com/linux/centos/docker-ce.repo"
+      args:
+        chdir: "/etc/yum.repos.d"
+        creates: docker-ce.repo
+
+    - name: install docker-ce
+      yum:
+        name: docker-ce
+        state: present
+
+    - name: Make service.d for docker
+      file:
+        path: /etc/systemd/system/docker.service.d/
+        state: directory
+
+    - name: make http-proxy.conf for docker
+      template:
+        src: template/http-proxy.conf.j2
+        dest: /etc/systemd/system/docker.service.d/http-proxy.conf
+
+    - name: restart docker
+      systemd:
+        name: docker.service
+        state: restarted
+        daemon_reload: yes
+        enabled: yes
+
+    - name: install pip
+      easy_install:
+        name: pip
+
+    - name: install docker-compose
+      pip:
+        name:
+          docker-compose

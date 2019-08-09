@@ -1,0 +1,2 @@
+- import_playbook: docker-install.yml
+- import_playbook: concourse-install.yml

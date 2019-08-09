@@ -1,0 +1,19 @@
+- name: Install concourse
+  become: true
+  hosts: all
+  tasks:
+    - name: get concourse-ci
+      get_url:
+        url: https://concourse-ci.org/docker-compose.yml
+        dest: .
+
+    - name: change EXTERNAL_URL
+      replace:
+        path: ./docker-compose.yml
+        regexp: 'http://localhost:8080'
+        replace: 'http://localhost:38080'
+
+    - name: Run concourse
+      docker_compose:
+        project_src: ./
+        state: present
