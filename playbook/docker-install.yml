@@ -1,10 +1,6 @@
 - name: Install docker
   become: true
   hosts: all
-  vars:
-    http_proxy: "{{ansible_env.http_proxy}}"
-    https_proxy: "{{ansible_env.https_proxy}}"
-    no_proxy: "{{ansible_env.no_proxy}}"
 
   tasks:
     - name: add docker repo
@@ -27,6 +23,10 @@
       template:
         src: template/http-proxy.conf.j2
         dest: /etc/systemd/system/docker.service.d/http-proxy.conf
+      when:
+        - ansible_env.http_proxy is defined
+        - ansible_env.https_proxy is defined
+        - ansible_env.no_proxy is defined
 
     - name: install pip
       easy_install:
