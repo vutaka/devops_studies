@@ -23,3 +23,8 @@
         url: http://localhost:8080/api/v1/cli?arch=amd64&platform=linux
         dest: /usr/local/bin/fly
         mode : 0755
+
+    - name: reload firewalld
+      service:
+        name: firewalld
+        state: restarted
