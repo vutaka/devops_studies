@@ -13,6 +13,7 @@
         name:
           - yum-utils
           - wget
+          - git
 
     - name: import ELRepo key
       rpm_key:
